@@ -51,6 +51,12 @@ func (s *orderHandlerImpl) CreateOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
+	var existingItem entity.Items
+	if err := db.Where("item_code = ?", input.Items[0].Item_Code).First(&existingItem).Error; err != nil {
+		errorMessage := "Terdapat item code yang sama"
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorMessage})
+	}
+
 	now := time.Now()
 
 	items := []entity.Items{
